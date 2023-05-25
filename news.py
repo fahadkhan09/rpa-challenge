@@ -157,7 +157,7 @@ class News:
                 image = self.download_image(image_elem, title)
             except (NoSuchElementException, AssertionError):
                 image, title, description = '', '', ''
-            image_paths.append(image)
+            img_paths.append(image)
             title_and_description = f'{title} {description}'
             search_counts.append(title_and_description.count(self.search_phrase))
             contains_money.append(bool(
