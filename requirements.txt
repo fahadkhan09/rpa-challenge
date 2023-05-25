@@ -1,0 +1,3 @@
+selenium==4.9.0
+rpaframework==22.5.3
+webdriver-manager==3.8.6
