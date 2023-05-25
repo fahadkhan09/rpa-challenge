@@ -143,19 +143,24 @@ class News:
 
         results_rows = self.driver.find_elements(
             '//ol[@data-testid="search-results"]//li[@data-testid="search-bodega-result"]')
-
+        pprint(f"{len(results_rows)} news results found.")
         titles, descriptions, dates, img_paths, search_counts, contains_money = list(), list(), list(), list(), list(), list()
         for row in results_rows:
-            title = row.find_element(By.CLASS_NAME, "css-2fgx4k").text
-            if title not in titles:
-                titles.append(title)
+            try:
+                title = row.find_element(By.CLASS_NAME, "css-2fgx4k").text
+                if title not in titles:
+                    titles.append(title)
                 description = row.find_element(By.CLASS_NAME, "css-16nhkrn").text
                 descriptions.append(description)
                 dates.append(row.find_element(By.CLASS_NAME, "css-17ubb9w").text)
-                img_paths.append(self.download_image(row.find_element(By.CLASS_NAME, "css-rq4mmj"), title))
-                title_and_description = f'{title} {description}'
-                search_counts.append(title_and_description.count(self.search_phrase))
-                contains_money.append(bool(
+                image_elem = row.find_element(By.CLASS_NAME, "css-rq4mmj")
+                image = self.download_image(image_elem, title)
+            except (NoSuchElementException, AssertionError):
+                image, title, description = '', '', ''
+            image_paths.append(image)
+            title_and_description = f'{title} {description}'
+            search_counts.append(title_and_description.count(self.search_phrase))
+            contains_money.append(bool(
                     re.match(r'(?:\$\d+\,?\.?\d+|\d+\s*(?:usd|dollars))', title_and_description, re.IGNORECASE)))
         else:
             self.data = [titles, descriptions, dates, img_paths, search_counts, contains_money]
